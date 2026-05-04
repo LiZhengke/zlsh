@@ -53,3 +53,14 @@ dkms.conf
 
 # debug information files
 *.dwo
+
+# CMake build outputs
+/build/
+CMakeCache.txt
+cmake_install.cmake
+Makefile
+CMakeFiles/
+compile_commands.json
+
+# Build products without file extension
+zlsh
