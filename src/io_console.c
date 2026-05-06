@@ -147,6 +147,9 @@ int printf(const char *restrict format, ...)
                 case 's':
                     print_str(va_arg(ap, char *));
                     break;
+                case 'c':
+                    print_char((char)va_arg(ap, int));
+                    break;
                 case 'd':
                     if (lengthLong != 0) {
                         print_signed_long(va_arg(ap, long));
