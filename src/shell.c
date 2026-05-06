@@ -16,6 +16,11 @@ static inline uint16_t get_cpl(void)
 static char cmdline[MAX_CMD_LEN];
 static char *argv[MAX_ARGC];
 
+static inline void cpu_relax(void)
+{
+    usys_yield();
+}
+
 static int str_eq(const char *lhs, const char *rhs)
 {
     if ((lhs == NULL) || (rhs == NULL)) {
@@ -35,21 +40,39 @@ static int str_eq(const char *lhs, const char *rhs)
 
 static void read_line(char *buf, uint32_t buf_len)
 {
-    uint32_t i;
+    uint32_t i = 0;
 
     if ((buf == NULL) || (buf_len == 0U)) {
         return;
     }
 
-    /* No input syscall is wired yet in this freestanding userland. */
-    for (i = 0; i + 1U < buf_len; i++) {
-        buf[i] = '\0';
+    for (;;) {
+        char ch = '\0';
+        int32_t n = usys_read(0, &ch, 1);
+
+        if (n <= 0) {
+            cpu_relax();
+            continue;
+        }
+
+        if (ch == '\r' || ch == '\n') {
+            printf("\n");
+            break;
+        }
+
+        if ((ch == '\b' || ch == 0x7f) && i > 0U) {
+            i--;
+            printf("\b \b");
+            continue;
+        }
+
+        if (ch >= ' ' && ch <= '~' && i + 1U < buf_len) {
+            buf[i++] = ch;
+            printf("%c", ch);
+        }
     }
-    buf[0] = 'e';
-    buf[1] = 'x';
-    buf[2] = 'i';
-    buf[3] = 't';
-    buf[4] = '\0';
+
+    buf[i] = '\0';
 }
 
 static int parse_cmdline(char *buf, char **out_argv)
@@ -97,7 +120,6 @@ static void handle_command(int argc, char **args)
     }
 
     printf("unknown command\n");
-    usys_delay(100);
 }
 
 int zlsh_main(void)
