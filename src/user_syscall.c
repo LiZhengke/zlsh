@@ -5,7 +5,8 @@
 #define SYS_DELAY_NR 2
 #define SYS_TICK_COUNT_NR 11
 #define SYS_TASK_EXEC_NR 13
-#define SYS_READ_NR 14
+#define SYS_TASK_SPAWN_NR 14
+#define SYS_TASK_WAITPID_NR 15
 #define SYSINT 0x30
 
 #define _STR(x) #x
@@ -88,7 +89,7 @@ int32_t usys_get_tick_count(void)
     return ret;
 }
 
-int32_t usys_task_exec(void* arg)
+int32_t usys_task_exec(const char *path, void* arg)
 {
     int32_t ret;
 
@@ -96,7 +97,24 @@ int32_t usys_task_exec(void* arg)
         "int $" STR(SYSINT)
         : "=a"(ret)
         : "a"(SYS_TASK_EXEC_NR),
-          "b"(arg)
+          "b"(path),
+          "c"(arg)
+        : "memory"
+    );
+
+    return ret;
+}
+
+int32_t usys_task_spawn(const char *path, void* arg)
+{
+    int32_t ret;
+
+    __asm__ volatile (
+        "int $" STR(SYSINT)
+        : "=a"(ret)
+        : "a"(SYS_TASK_SPAWN_NR),
+          "b"(path),
+          "c"(arg)
         : "memory"
     );
 
