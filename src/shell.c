@@ -115,14 +115,14 @@ static void handle_command(int argc, char **args)
 
     if (str_eq(args[0], "run") && (argc > 1)) {
         /* TODO: add exec syscall integration. */
-        usys_task_exec(args[1]);
+        usys_task_exec(args[1], NULL);
         return;
     }
 
     printf("unknown command\n");
 }
 
-int zlsh_main(void)
+int main(void)
 {
     printf("[shell] tick=%lu cpl=%d\n", (unsigned long)usys_get_tick_count(), get_cpl());
 

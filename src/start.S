@@ -3,10 +3,10 @@
 .global _start
 .type _start, @function
 
-.extern zlsh_main
+.extern main
 
 _start:
-    call zlsh_main
+    call main
     /* If main returns, loop forever */
     mov $0, %ebx
     mov $14, %eax   # sys_exit
