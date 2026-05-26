@@ -1,6 +1,7 @@
 #include "user_syscall.h"
 
 #define SYS_WRITE_NR 1
+#define SYS_READ_NR 16
 #define SYS_YIELD_NR 0
 #define SYS_DELAY_NR 2
 #define SYS_TICK_COUNT_NR 11
@@ -115,6 +116,22 @@ int32_t usys_task_spawn(const char *path, void* arg)
         : "a"(SYS_TASK_SPAWN_NR),
           "b"(path),
           "c"(arg)
+        : "memory"
+    );
+
+    return ret;
+}
+
+int32_t usys_task_waitpid(int pid, int *status)
+{
+    int32_t ret;
+
+    __asm__ volatile (
+        "int $" STR(SYSINT)
+        : "=a"(ret)
+        : "a"(SYS_TASK_WAITPID_NR),
+          "b"(pid),
+          "c"(status)
         : "memory"
     );
 
