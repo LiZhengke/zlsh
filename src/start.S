@@ -7,9 +7,9 @@
 
 _start:
     call main
-    /* If main returns, loop forever */
-    mov $0, %ebx
-    mov $14, %eax   # sys_exit
+    /* Propagate main's return value to sys_exit. */
+    mov %eax, %ebx
+    mov $4, %eax   # sys_exit
     int $0x30
 .hang:
     jmp .hang

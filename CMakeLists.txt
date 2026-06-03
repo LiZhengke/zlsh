@@ -65,3 +65,4 @@ endfunction()
 
 add_zelix_user_program(init src/init.c)
 add_zelix_user_program(sh src/shell.c)
+add_zelix_user_program(test src/test.c)
