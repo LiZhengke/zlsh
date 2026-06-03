@@ -104,18 +104,39 @@ static int parse_cmdline(char *buf, char **out_argv)
 
 static void handle_command(int argc, char **args)
 {
-    if (str_eq(args[0], "exit")) {
+    if (str_eq(args[0], "help")) {
+        printf("Available commands:\n");
+        printf("  help - Show this help message\n");
+        printf("  ls [path] - List files in a directory\n");
+        printf("  run <path> - Run a program and wait for it\n");
         return;
     }
 
     if (str_eq(args[0], "ls")) {
-        /* TODO: add ls syscall integration. */
+        const char *path = (argc > 1) ? args[1] : "/";
+        int32_t ret = usys_listdir(path);
+
+        if (ret < 0) {
+            printf("ls failed: %ld\n", (long)ret);
+        }
         return;
     }
 
     if (str_eq(args[0], "run") && (argc > 1)) {
-        /* TODO: add exec syscall integration. */
-        usys_task_exec(args[1], NULL);
+        int status = 0;
+        int32_t pid = usys_task_spawn(args[1], NULL);
+
+        if (pid < 0) {
+            printf("run failed: %ld\n", (long)pid);
+            return;
+        }
+
+        if (usys_task_waitpid(pid, &status) < 0) {
+            printf("waitpid failed for %s: %ld\n", args[1], (long)pid);
+            return;
+        }
+
+        printf("%s exited: %d\n", args[1], status);
         return;
     }
 
