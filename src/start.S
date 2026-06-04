@@ -9,7 +9,7 @@ _start:
     call main
     /* Propagate main's return value to sys_exit. */
     mov %eax, %ebx
-    mov $4, %eax   # sys_exit
+    mov $3, %eax   # sys_exit
     int $0x30
 .hang:
     jmp .hang
