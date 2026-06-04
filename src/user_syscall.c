@@ -9,6 +9,7 @@
 #define SYS_TASK_SPAWN_NR 14
 #define SYS_TASK_WAITPID_NR 15
 #define SYS_LISTDIR_NR 17
+#define SYS_PS_NR 18
 #define SYSINT 0x30
 
 #define _STR(x) #x
@@ -148,6 +149,20 @@ int32_t usys_listdir(const char *path)
         : "=a"(ret)
         : "a"(SYS_LISTDIR_NR),
           "b"(path)
+        : "memory"
+    );
+
+    return ret;
+}
+
+int32_t usys_ps(void)
+{
+    int32_t ret;
+
+    __asm__ volatile (
+        "int $" STR(SYSINT)
+        : "=a"(ret)
+        : "a"(SYS_PS_NR)
         : "memory"
     );
 

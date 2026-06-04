@@ -107,8 +107,18 @@ static void handle_command(int argc, char **args)
     if (str_eq(args[0], "help")) {
         printf("Available commands:\n");
         printf("  help - Show this help message\n");
+        printf("  ps - Show process list\n");
         printf("  ls [path] - List files in a directory\n");
         printf("  run <path> - Run a program and wait for it\n");
+        return;
+    }
+
+    if (str_eq(args[0], "ps")) {
+        int32_t ret = usys_ps();
+
+        if (ret < 0) {
+            printf("ps failed: %ld\n", (long)ret);
+        }
         return;
     }
 

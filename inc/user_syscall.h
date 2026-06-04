@@ -12,4 +12,5 @@ int32_t usys_task_exec(const char *path, void* arg);
 int32_t usys_task_spawn(const char *path, void* arg);
 int32_t usys_task_waitpid(int pid, int *status);
 int32_t usys_listdir(const char *path);
+int32_t usys_ps(void);
 #endif /* USER_SYSCALL_H */
